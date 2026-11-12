@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MGutterSolutions · Indicadores 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600&display=swap">
+<style>
+/* Layout: encabezado de marca, fila de KPIs, gráfico semanal ancho, escenarios, dos columnas, tablas */
+:root{
+  --bg:#f5f7f9; --panel:#ffffff; --fg:#14202b; --muted:#5b6b78; --line:#dde3e8;
+  --accent:#1f6f9f; --accent2:#e08a1e; --range:#9fb4c4; --ok:#1d7f4e; --bad:#b4372f;
+  --font:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif; --display:"Archivo Narrow","Archivo",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f161c;--panel:#16212a;--fg:#e6edf2;--muted:#93a4b1;--line:#263540;--accent:#5aa9d8;--accent2:#f0a54a;--range:#3f5666;--ok:#4cc38a;--bad:#f07a6f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f161c;--panel:#16212a;--fg:#e6edf2;--muted:#93a4b1;--line:#263540;--accent:#5aa9d8;--accent2:#f0a54a;--range:#3f5666;--ok:#4cc38a;--bad:#f07a6f;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:32px}
+header{display:flex;flex-direction:column;gap:10px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:40px;height:40px;flex:none}
+.brand .name{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(28px,4.4vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:20px;margin:0;text-wrap:balance}
+.sub{color:var(--muted);font-size:13px;margin:0}
+.lede{max-width:72ch;margin:0;font-size:16px}
+.lede b{font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.lbl{font-size:12.5px;color:var(--muted)}
+.big{font-family:var(--display);font-weight:600;font-size:28px;line-height:1.15;font-variant-numeric:tabular-nums}
+.note{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.up{color:var(--ok)} .down{color:var(--bad)}
+section{display:flex;flex-direction:column;gap:12px;min-width:0}
+.sechead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{font:inherit;font-size:13px;padding:7px 12px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff;font-weight:600}
+.seg button:focus-visible{outline:2px solid var(--accent2);outline-offset:-2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.chart{position:relative;width:100%;min-height:300px}
+.chart.short{min-height:240px}
+.chart svg{display:block;overflow:visible}
+.chart text{fill:var(--muted);font-size:12px;font-family:var(--font)}
+.chart .tick line{stroke:var(--line)}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);box-shadow:0 6px 20px rgba(0,0,0,.15);border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.45;white-space:nowrap;font-variant-numeric:tabular-nums;z-index:2;color:var(--muted)}
+.tip strong{color:var(--fg)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:2px;display:inline-block}
+.sw.line{height:3px;border-radius:0}
+.scen{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.scen .tile.base{border-color:var(--accent);border-width:2px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);background:var(--panel)}
+td.n,th.n{text-align:right}
+tr:last-child td{border-bottom:0}
+details{font-size:13px;color:var(--muted)}
+details summary{cursor:pointer;color:var(--fg);font-weight:500}
+details ul{padding-left:18px;margin:8px 0 0;max-width:80ch}
+footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="var(--accent)"/><path d="M8 13h24v5a8 8 0 0 1-8 8h-8a8 8 0 0 1-8-8z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M26 26v8" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
+      <span class="name">MGutterSolutions</span>
+    </div>
+    <h1>Indicadores y proyección 2026</h1>
+    <p class="sub" id="corte"></p>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <div class="tiles" id="kpis"></div>
+
+  <section>
+    <div class="sechead">
+      <div><h2>Facturación por semana de pago</h2><p class="sub">Barras: semanas reales · Línea: promedio móvil de 4 semanas · Zona derecha: proyección al 31 de diciembre</p></div>
+      <div class="seg" role="group" aria-label="Métrica">
+        <button type="button" data-metric="total" aria-pressed="true">Total facturado</button>
+        <button type="button" data-metric="bigt" aria-pressed="false">Pago Big T</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart" id="g-sem"></div>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--accent)"></i>Semana real</span>
+        <span><i class="sw line" style="background:var(--accent2)"></i>Promedio móvil 4 sem.</span>
+        <span><i class="sw" style="background:var(--range)"></i>Rango conservador–optimista</span>
+        <span><i class="sw line" style="background:var(--fg)"></i>Escenario base</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div><h2>Proyección de cierre 2026</h2><p class="sub" id="p-sub"></p></div>
+    <div class="scen" id="scen"></div>
+  </section>
+
+  <div class="grid2">
+    <section>
+      <div><h2>Facturación por mes</h2><p class="sub">Por fecha del trabajo; noviembre es parcial</p></div>
+      <div class="card"><div class="chart short" id="g-mes"></div></div>
+    </section>
+    <section>
+      <div><h2>Participación por contratista</h2><p class="sub">Total facturado en el año</p></div>
+      <div class="card"><div class="chart short" id="g-con"></div></div>
+    </section>
+  </div>
+
+  <section>
+    <h2>Detalle por contratista</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Contratista</th><th class="n">Trabajos</th><th class="n">Pies</th><th class="n">Total facturado</th><th class="n">Pago Big T</th><th class="n">Ticket prom.</th><th class="n">Participación</th></tr></thead>
+      <tbody id="t-con"></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div><h2>Pendiente de cobro por contratista</h2><p class="sub">Trabajos hechos que aún no se han cobrado</p></div>
+    <div class="tw"><table>
+      <thead><tr><th>Contratista</th><th class="n">Trabajos</th><th class="n">Monto pendiente</th><th class="n">Big T pendiente</th></tr></thead>
+      <tbody id="t-pend"></tbody>
+    </table></div>
+  </section>
+
+  <details>
+    <summary>Cómo se calculan los indicadores y las proyecciones</summary>
+    <ul>
+      <li><b>Total facturado</b> es el monto de cada trabajo pagado; <b>Pago Big T</b> es la comisión Big T (en la mayoría de los trabajos, $0.75 por pie).</li>
+      <li><b>Escenario base</b>: las semanas que faltan repiten el promedio de las últimas 8 semanas de pago.</li>
+      <li><b>Conservador</b>: 70 % del promedio base, por una posible baja de trabajo en invierno (supuesto).</li>
+      <li><b>Optimista</b>: sigue la tendencia lineal de todas las semanas del año. El pago Big T proyectado usa la proporción Big T/Total de las últimas 8 semanas.</li>
+      <li>Los contratistas fuera de los 8 principales se agrupan en «Otros». Los trabajos sin contratista aparecen como «Directo / otros».</li>
+    </ul>
+  </details>
+  <footer>MGutterSolutions · Datos de las hojas de pago semanales 2026.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const DATA = {"semanal": [{"semana": "2026-01-20", "total": 5527.0, "bigt": 585.0, "pies": 780.0, "trabajos": 3}, {"semana": "2026-01-27", "total": 9482.5, "bigt": 995.25, "pies": 1327.0, "trabajos": 6}, {"semana": "2026-01-30", "total": 8189.88, "bigt": 769.5, "pies": 1026.0, "trabajos": 6}, {"semana": "2026-02-06", "total": 16352.5, "bigt": 1692.0, "pies": 2256.0, "trabajos": 10}, {"semana": "2026-02-13", "total": 4185.5, "bigt": 461.5, "pies": 605.0, "trabajos": 6}, {"semana": "2026-02-20", "total": 15900.77, "bigt": 1707.0, "pies": 2276.0, "trabajos": 5}, {"semana": "2026-02-27", "total": 28744.5, "bigt": 3070.5, "pies": 4094.0, "trabajos": 19}, {"semana": "2026-03-06", "total": 1043.0, "bigt": 111.75, "pies": 149.0, "trabajos": 1}, {"semana": "2026-03-13", "total": 19318.0, "bigt": 2017.5, "pies": 2690.0, "trabajos": 11}, {"semana": "2026-03-20", "total": 5977.0, "bigt": 564.75, "pies": 753.0, "trabajos": 4}, {"semana": "2026-03-27", "total": 3934.5, "bigt": 447.75, "pies": 597.0, "trabajos": 3}, {"semana": "2026-04-03", "total": 8215.5, "bigt": 962.25, "pies": 1283.0, "trabajos": 3}, {"semana": "2026-04-10", "total": 3871.5, "bigt": 423.0, "pies": 564.0, "trabajos": 3}, {"semana": "2026-04-24", "total": 14038.5, "bigt": 1761.75, "pies": 2349.0, "trabajos": 15}, {"semana": "2026-05-01", "total": 13672.0, "bigt": 1520.25, "pies": 2027.0, "trabajos": 10}, {"semana": "2026-05-08", "total": 7083.5, "bigt": 651.75, "pies": 869.0, "trabajos": 3}, {"semana": "2026-05-15", "total": 25945.0, "bigt": 2825.65, "pies": 3603.0, "trabajos": 15}, {"semana": "2026-05-22", "total": 30569.74, "bigt": 3112.5, "pies": 4150.0, "trabajos": 21}, {"semana": "2026-05-29", "total": 36547.1, "bigt": 3295.5, "pies": 4394.0, "trabajos": 16}, {"semana": "2026-06-05", "total": 23424.5, "bigt": 2473.5, "pies": 3298.0, "trabajos": 11}, {"semana": "2026-06-12", "total": 12998.0, "bigt": 1312.5, "pies": 1750.0, "trabajos": 7}, {"semana": "2026-06-19", "total": 14398.5, "bigt": 1587.25, "pies": 2023.0, "trabajos": 7}, {"semana": "2026-06-26", "total": 40864.49, "bigt": 4195.92, "pies": 5512.5, "trabajos": 26}, {"semana": "2026-07-03", "total": 35091.62, "bigt": 3450.0, "pies": 4600.0, "trabajos": 16}, {"semana": "2026-07-10", "total": 10439.5, "bigt": 1189.5, "pies": 1586.0, "trabajos": 7}, {"semana": "2026-07-17", "total": 61932.25, "bigt": 6356.25, "pies": 8475.0, "trabajos": 28}, {"semana": "2026-07-23", "total": 6043.0, "bigt": 672.75, "pies": 897.0, "trabajos": 4}, {"semana": "2026-07-31", "total": 32508.28, "bigt": 3534.5, "pies": 4730.0, "trabajos": 18}, {"semana": "2026-08-07", "total": 47927.5, "bigt": 4757.75, "pies": 6477.0, "trabajos": 23}, {"semana": "2026-08-14", "total": 22163.5, "bigt": 2109.0, "pies": 2812.0, "trabajos": 7}, {"semana": "2026-08-21", "total": 33239.0, "bigt": 3522.0, "pies": 4696.0, "trabajos": 14}, {"semana": "2026-08-28", "total": 35333.36, "bigt": 3902.63, "pies": 5418.0, "trabajos": 20}, {"semana": "2026-09-04", "total": 52071.0, "bigt": 5705.25, "pies": 7607.0, "trabajos": 32}, {"semana": "2026-09-11", "total": 21067.5, "bigt": 2298.75, "pies": 3065.0, "trabajos": 10}, {"semana": "2026-09-21", "total": 26721.25, "bigt": 2953.5, "pies": 3653.0, "trabajos": 12}, {"semana": "2026-09-25", "total": 14957.0, "bigt": 1725.25, "pies": 2237.0, "trabajos": 12}, {"semana": "2026-10-02", "total": 43945.0, "bigt": 4488.75, "pies": 5985.0, "trabajos": 20}, {"semana": "2026-10-09", "total": 37328.64, "bigt": 3570.0, "pies": 4760.0, "trabajos": 11}, {"semana": "2026-10-16", "total": 29431.0, "bigt": 2929.5, "pies": 3856.0, "trabajos": 13}, {"semana": "2026-10-23", "total": 28577.0, "bigt": 2897.0, "pies": 3696.0, "trabajos": 14}, {"semana": "2026-10-30", "total": 36331.89, "bigt": 3495.75, "pies": 4661.0, "trabajos": 13}, {"semana": "2026-11-06", "total": 20250.0, "bigt": 2081.44, "pies": 2595.0, "trabajos": 12}], "mensual": [{"mes": "2026-01", "total": 49603.65, "bigt": 5072.5, "trabajos": 34}, {"mes": "2026-02", "total": 53450.5, "bigt": 5811.75, "trabajos": 30}, {"mes": "2026-03", "total": 27173.0, "bigt": 2869.5, "trabajos": 18}, {"mes": "2026-04", "total": 58816.0, "bigt": 6556.9, "trabajos": 41}, {"mes": "2026-05", "total": 115025.34, "bigt": 11446.5, "trabajos": 60}, {"mes": "2026-06", "total": 107282.39, "bigt": 11155.17, "trabajos": 63}, {"mes": "2026-07", "total": 159379.25, "bigt": 16196.5, "trabajos": 76}, {"mes": "2026-08", "total": 132512.86, "bigt": 14372.13, "trabajos": 70}, {"mes": "2026-09", "total": 130740.39, "bigt": 13660.0, "trabajos": 55}, {"mes": "2026-10", "total": 110127.39, "bigt": 10877.94, "trabajos": 49}, {"mes": "2026-11", "total": 1531.0, "bigt": 165.0, "trabajos": 1}], "contratistas": [{"contratista": "Brody Allen", "total": 24226.5, "bigt": 2486.25, "pies": 3315.0, "trabajos": 16}, {"contratista": "Bone Dry", "total": 81015.98, "bigt": 8382.75, "pies": 11301.0, "trabajos": 48}, {"contratista": "Cardinal", "total": 328055.85, "bigt": 34333.07, "pies": 45543.0, "trabajos": 182}, {"contratista": "Bordner", "total": 293031.5, "bigt": 30601.17, "pies": 40619.5, "trabajos": 145}, {"contratista": "Directo / otros", "total": 15373.0, "bigt": 1605.0, "pies": 2140.0, "trabajos": 8}, {"contratista": "Blue Ladder", "total": 550.0, "bigt": 62.25, "pies": 83.0, "trabajos": 2}, {"contratista": "Messing", "total": 14826.56, "bigt": 1635.75, "pies": 2181.0, "trabajos": 13}, {"contratista": "Best Choice", "total": 5373.71, "bigt": 906.0, "pies": 1208.0, "trabajos": 2}, {"contratista": "Roof Works", "total": 52758.0, "bigt": 5488.15, "pies": 7153.0, "trabajos": 28}, {"contratista": "Griggs", "total": 5446.0, "bigt": 630.0, "pies": 840.0, "trabajos": 3}, {"contratista": "Empower", "total": 24046.5, "bigt": 2027.25, "pies": 2703.0, "trabajos": 8}, {"contratista": "Dark Skies", "total": 4820.5, "bigt": 443.25, "pies": 591.0, "trabajos": 2}, {"contratista": "Lenz", "total": 3894.0, "bigt": 411.0, "pies": 548.0, "trabajos": 2}, {"contratista": "ER", "total": 2204.0, "bigt": 252.0, "pies": 336.0, "trabajos": 1}, {"contratista": "Maverick", "total": 34043.5, "bigt": 3371.25, "pies": 4495.0, "trabajos": 16}, {"contratista": "Granite City", "total": 1005.0, "bigt": 100.5, "pies": 134.0, "trabajos": 1}, {"contratista": "Legendz", "total": 32561.17, "bigt": 3208.25, "pies": 4171.0, "trabajos": 13}, {"contratista": "Creve Coeur", "total": 2046.0, "bigt": 204.0, "pies": 272.0, "trabajos": 1}, {"contratista": "Golden", "total": 2786.5, "bigt": 354.75, "pies": 473.0, "trabajos": 1}, {"contratista": "GLDN", "total": 3574.0, "bigt": 424.5, "pies": 566.0, "trabajos": 1}, {"contratista": "Kendale Homes", "total": 8516.5, "bigt": 657.75, "pies": 877.0, "trabajos": 1}, {"contratista": "Green", "total": 4487.0, "bigt": 474.0, "pies": 632.0, "trabajos": 2}, {"contratista": "Pro Roofing", "total": 1000.0, "bigt": 125.0, "pies": 0.0, "trabajos": 1}], "pendientes": [{"contratista": "All or Nothing", "total": 4379.5, "bigt": 467.25, "trabajos": 2}, {"contratista": "Directo / otros", "total": 2115.5, "bigt": 210.75, "trabajos": 2}, {"contratista": "Cardinal", "total": 36129.0, "bigt": 3821.25, "trabajos": 14}, {"contratista": "Roof Works", "total": 8707.5, "bigt": 940.13, "trabajos": 5}, {"contratista": "Blue Ladder", "total": 13888.86, "bigt": 1652.25, "trabajos": 4}, {"contratista": "Empower", "total": 929.5, "bigt": 107.25, "trabajos": 1}, {"contratista": "Dark Skies", "total": 1366.0, "bigt": 162.0, "trabajos": 2}, {"contratista": "Messing", "total": 2399.0, "bigt": 319.5, "trabajos": 2}, {"contratista": "Santamaria", "total": 150.0, "bigt": 0.0, "trabajos": 1}, {"contratista": "AJ", "total": 85.0, "bigt": 10.5, "trabajos": 1}, {"contratista": "Legendz", "total": 2147.0, "bigt": 235.5, "trabajos": 2}, {"contratista": "Bordner", "total": 17549.5, "bigt": 1724.25, "trabajos": 8}, {"contratista": "Bone Dry", "total": 693.0, "bigt": 79.5, "trabajos": 1}], "trabajos_con_monto": 493, "corte": "2026-11-06"};
+(function(){
+  const money = d3.format('$,.0f'), int = d3.format(',.0f'), p1 = d3.format('.1f');
+  const mk = (v) => v >= 1e6 ? '$' + d3.format('.2f')(v/1e6) + ' M' : v >= 1e4 ? '$' + d3.format('.1f')(v/1e3) + ' k' : money(v);
+  const pd = d3.utcParse('%Y-%m-%d'), pm = d3.utcParse('%Y-%m');
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const mesesL = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fd = (d) => d.getUTCDate() + ' ' + meses[d.getUTCMonth()];
+  const signed = (v) => (v > 0 ? '+' : '') + p1(v) + ' %';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+
+  // ---- cálculos
+  const S = DATA.semanal, Tot = d3.sum(S, s => s.total), BT = d3.sum(S, s => s.bigt), Pies = d3.sum(S, s => s.pies), Trab = d3.sum(S, s => s.trabajos);
+  const ult = S.slice(-8), prev = S.slice(-16, -8);
+  const prom8 = d3.mean(ult, s => s.total), promPrev = d3.mean(prev, s => s.total), cambio = (prom8/promPrev - 1) * 100;
+  const ratio = d3.sum(ult, s => s.bigt) / d3.sum(ult, s => s.total);
+  const last = pd(S[S.length-1].semana); let semanas = 0;
+  for (let t = last.getTime() + 7*864e5; t <= Date.UTC(2026,11,31); t += 7*864e5) semanas++;
+  const n = S.length, xm = (n-1)/2, ym = Tot/n;
+  const b = d3.sum(S, (s,i) => (i-xm)*(s.total-ym)) / d3.sum(S, (s,i) => (i-xm)**2), a = ym - b*xm;
+  let tend = 0; for (let k = 1; k <= semanas; k++) tend += Math.max(0, a + b*(n-1+k));
+  const esc = [['Conservador','70 % del promedio reciente',prom8*0.7*semanas],['Base','Promedio de las últimas 8 semanas',prom8*semanas],['Optimista','Sigue la tendencia del año',tend]]
+    .map(([nombre, nota, rest]) => ({nombre, nota, semanal: rest/semanas, semanalBT: rest*ratio/semanas, cierre: Tot + rest, cierreBT: BT + rest*ratio}));
+  const base = esc[1];
+  const P = DATA.pendientes, pendT = d3.sum(P, r => r.total), pendB = d3.sum(P, r => r.bigt), pendN = d3.sum(P, r => r.trabajos);
+  const conAll = DATA.contratistas.slice().sort((x,y) => y.total - x.total);
+  const top = conAll.slice(0,8), resto = conAll.slice(8);
+  const con = top.concat(resto.length ? [{contratista: 'Otros (' + resto.length + ')', total: d3.sum(resto, r => r.total), bigt: d3.sum(resto, r => r.bigt), pies: d3.sum(resto, r => r.pies), trabajos: d3.sum(resto, r => r.trabajos), otros: true}] : []);
+
+  // ---- encabezado
+  const corte = pd(DATA.corte);
+  document.getElementById('corte').textContent = 'Trabajos pagados de enero al ' + corte.getUTCDate() + ' de ' + mesesL[corte.getUTCMonth()] + ' de 2026 · ' + S.length + ' semanas de pago';
+  const lede = document.getElementById('lede');
+  const B = (t) => el('b', null, t);
+  lede.append('En lo que va del año se han facturado ', B(money(Tot)), ' en ', B(int(Trab)), ' trabajos. Las últimas 8 semanas promedian ', B(money(prom8)), ' por semana (', B(signed(cambio)), ' frente a las 8 anteriores). A este ritmo, el año cerraría cerca de ', B(money(base.cierre)), ' facturados y ', B(money(base.cierreBT)), ' de pago Big T.');
+
+  // ---- KPIs
+  const kpis = [
+    ['Total facturado (año)', money(Tot), S.length + ' semanas de pago'],
+    ['Pago Big T (año)', money(BT), p1(BT/Tot*100) + ' % del total facturado'],
+    ['Pies instalados (año)', int(Pies), d3.format('$,.2f')(Tot/Pies) + ' facturado por pie'],
+    ['Ticket promedio', money(Tot/DATA.trabajos_con_monto), int(Trab) + ' trabajos pagados'],
+    ['Promedio semanal (últ. 8 sem.)', money(prom8), [signed(cambio), cambio >= 0 ? 'up' : 'down', ' vs. 8 semanas previas']],
+    ['Pendiente de cobro', money(pendT), int(pendN) + ' trabajos · ' + money(pendB) + ' de Big T']
+  ];
+  const K = document.getElementById('kpis');
+  kpis.forEach(([l, v, nt]) => { const t = el('div','tile'); t.append(el('span','lbl',l), el('span','big',v));
+    const no = el('span','note'); if (Array.isArray(nt)) { no.append(el('span', nt[1], nt[0]), nt[2]); } else no.textContent = nt; t.append(no); K.append(t); });
+
+  // ---- escenarios
+  document.getElementById('p-sub').textContent = 'Lo ya facturado más las ' + semanas + ' semanas de pago que faltan hasta el 31 de diciembre';
+  const SC = document.getElementById('scen');
+  esc.forEach(e => { const t = el('div', 'tile' + (e.nombre === 'Base' ? ' base' : ''));
+    t.append(el('span','lbl', e.nombre + ' · ' + e.nota), el('span','big', money(e.cierre)), el('span','note','Cierre 2026 facturado'),
+      el('span','note', money(e.cierreBT) + ' de pago Big T al cierre'), el('span','note', money(e.semanal) + ' por semana en lo que resta'));
+    SC.append(t); });
+
+  // ---- tablas
+  const row = (cells) => { const tr = el('tr'); cells.forEach(([v, num]) => tr.append(el('td', num ? 'n' : '', v))); return tr; };
+  const TC = document.getElementById('t-con');
+  con.forEach(r => TC.append(row([[r.contratista],[int(r.trabajos),1],[int(r.pies),1],[money(r.total),1],[money(r.bigt),1],[money(r.total/r.trabajos),1],[p1(r.total/Tot*100) + ' %',1]])));
+  const TP = document.getElementById('t-pend');
+  P.slice().sort((x,y) => y.total - x.total).forEach(r => TP.append(row([[r.contratista],[int(r.trabajos),1],[money(r.total),1],[money(r.bigt),1]])));
+  TP.append(row([['Total'],[int(pendN),1],[money(pendT),1],[money(pendB),1]]));
+  TP.lastChild.style.fontWeight = '600';
+
+  // ---- gráficos
+  function tipper(box){ const tip = el('div','tip'); tip.hidden = true; box.append(tip);
+    return { show(lines, x, y){ tip.replaceChildren(); lines.forEach(([t, s]) => { const d = el('div'); if (s) d.append(el('strong', null, t)); else d.textContent = t; tip.append(d); });
+      tip.hidden = false; const w = tip.offsetWidth; tip.style.left = Math.max(0, Math.min(box.clientWidth - w, x - w/2)) + 'px'; tip.style.top = Math.max(0, y - tip.offsetHeight - 10) + 'px'; },
+      hide(){ tip.hidden = true; } }; }
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  let metric = 'total', animated = false;
+
+  function drawSem(){
+    const box = document.getElementById('g-sem'); box.replaceChildren();
+    const key = metric, pk = key === 'total' ? 'semanal' : 'semanalBT';
+    const rows = S.map(r => ({d: pd(r.semana), v: r[key], r}));
+    const fut = d3.range(1, semanas+1).map(k => new Date(last.getTime() + k*7*864e5));
+    const ma = rows.map((r,i) => ({d: r.d, v: d3.mean(rows.slice(Math.max(0,i-3), i+1), q => q.v)}));
+    const W = box.clientWidth, H = 300, m = {t: 14, r: 6, b: 26, l: 8};
+    const svg = d3.select(box).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role','img')
+      .attr('aria-label', (key === 'total' ? 'Total facturado' : 'Pago Big T') + ' por semana de pago en 2026 con proyección al cierre del año');
+    const y = d3.scaleLinear().domain([0, d3.max([d3.max(rows, r => r.v), d3.max(esc, e => e[pk])])]).nice().range([H - m.b, m.t]);
+    const gy = svg.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(mk));
+    let lw = 0; gy.selectAll('text').each(function(){ lw = Math.max(lw, this.getComputedTextLength()); }); gy.remove();
+    m.l = lw + 12;
+    const all = rows.map(r => +r.d).concat(fut.map(Number));
+    const x = d3.scaleBand().domain(all).range([m.l, W - m.r]).padding(0.18);
+    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(mk).tickSize(-(W - m.l - m.r))).call(g => g.select('.domain').remove());
+    const step = Math.max(1, Math.ceil(all.length / Math.max(2, Math.floor((W - m.l) / 64))));
+    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(all.filter((_, i) => i % step === 0)).tickFormat(d => fd(new Date(d))).tickSize(0).tickPadding(8))
+      .call(g => g.select('.domain').attr('stroke', css('--line')));
+    const x0 = x(+fut[0]) - x.step()*x.padding()/2, x1 = W - m.r;
+    const by = Object.fromEntries(esc.map(e => [e.nombre, e[pk]]));
+    svg.append('rect').attr('x', x0).attr('width', x1 - x0).attr('y', y(by.Optimista)).attr('height', Math.max(0, y(by.Conservador) - y(by.Optimista))).attr('fill', css('--range')).attr('opacity', .6).attr('rx', 3);
+    svg.append('line').attr('x1', x0).attr('x2', x1).attr('y1', y(by.Base)).attr('y2', y(by.Base)).attr('stroke', css('--fg')).attr('stroke-width', 2).attr('stroke-dasharray', '6 4');
+    if (x1 - x0 > 70) svg.append('text').attr('x', x0 + 6).attr('y', m.t + 10).text('Proyección');
+    const bars = svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', r => x(+r.d)).attr('width', x.bandwidth()).attr('rx', 2).attr('fill', css('--accent'))
+      .attr('y', r => y(r.v)).attr('height', r => y(0) - y(r.v));
+    if (!animated && !reduce) { bars.attr('y', y(0)).attr('height', 0).transition().duration(650).delay((_, i) => i*12).attr('y', r => y(r.v)).attr('height', r => y(0) - y(r.v)); }
+    animated = true;
+    svg.append('path').datum(ma).attr('fill','none').attr('stroke', css('--accent2')).attr('stroke-width', 2.5).attr('d', d3.line().x(r => x(+r.d) + x.bandwidth()/2).y(r => y(r.v)));
+    const t = tipper(box);
+    svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('pointermove', (ev) => { const [px] = d3.pointer(ev); const i = Math.max(0, Math.min(all.length-1, Math.floor((px - m.l)/x.step()))); const d = all[i];
+        const r = rows.find(q => +q.d === d);
+        if (r) { const mv = ma.find(q => +q.d === d); t.show([['Semana de pago ' + fd(new Date(d)), 1], [(key === 'total' ? 'Total: ' : 'Big T: ') + money(r.v)], ['Prom. móvil 4 sem.: ' + money(mv.v)], [int(r.r.trabajos) + ' trabajos · ' + int(r.r.pies) + ' pies']], x(d) + x.bandwidth()/2, y(r.v)); }
+        else t.show([['Proyección ' + fd(new Date(d)), 1], ['Optimista: ' + money(by.Optimista)], ['Base: ' + money(by.Base)], ['Conservador: ' + money(by.Conservador)]], x(d) + x.bandwidth()/2, y(by.Optimista)); })
+      .on('pointerleave', () => t.hide());
+  }
+
+  function drawMes(){
+    const box = document.getElementById('g-mes'); box.replaceChildren();
+    const rows = DATA.mensual.map(r => ({d: pm(r.mes), v: r.total, r}));
+    const W = box.clientWidth, H = 240, m = {t: 22, r: 4, b: 24, l: 4};
+    const svg = d3.select(box).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role','img').attr('aria-label','Total facturado por mes, enero a noviembre de 2026');
+    const x = d3.scaleBand().domain(rows.map(r => +r.d)).range([m.l, W - m.r]).padding(0.2);
+    const y = d3.scaleLinear().domain([0, d3.max(rows, r => r.v)]).range([H - m.b, m.t]);
+    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat(d => meses[new Date(d).getUTCMonth()]).tickSize(0).tickPadding(8)).call(g => g.select('.domain').attr('stroke', css('--line')));
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', r => x(+r.d)).attr('width', x.bandwidth()).attr('y', r => y(r.v)).attr('height', r => y(0) - y(r.v)).attr('rx', 2)
+      .attr('fill', (r, i) => i === rows.length - 1 ? css('--range') : css('--accent'));
+    if (x.bandwidth() > 46) svg.append('g').selectAll('text').data(rows).join('text').attr('x', r => x(+r.d) + x.bandwidth()/2).attr('y', r => y(r.v) - 5).attr('text-anchor','middle').text(r => mk(r.v));
+    const t = tipper(box);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', r => x(+r.d) - x.step()*x.padding()/2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).attr('fill','transparent')
+      .on('pointerenter', (ev, r) => t.show([[mesesL[r.d.getUTCMonth()] + ' 2026', 1], ['Total: ' + money(r.v)], ['Big T: ' + money(r.r.bigt)], [int(r.r.trabajos) + ' trabajos']], x(+r.d) + x.bandwidth()/2, y(r.v)))
+      .on('pointerleave', () => t.hide());
+  }
+
+  function drawCon(){
+    const box = document.getElementById('g-con'); box.replaceChildren();
+    const W = box.clientWidth, rh = 26, H = con.length * rh + 4;
+    const svg = d3.select(box).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role','img').attr('aria-label','Participación de cada contratista en el total facturado');
+    const names = svg.append('g').selectAll('text').data(con).join('text').attr('y', (r, i) => i*rh + rh/2 + 4).text(r => r.contratista);
+    let nw = 0; names.each(function(){ nw = Math.max(nw, this.getComputedTextLength()); });
+    const probe = svg.append('text').text('100.0 %  $000.0 k'); const vw = probe.node().getComputedTextLength(); probe.remove();
+    const x0 = nw + 10, x = d3.scaleLinear().domain([0, d3.max(con, r => r.total)]).range([0, Math.max(20, W - x0 - vw - 10)]);
+    svg.append('g').selectAll('rect').data(con).join('rect').attr('x', x0).attr('y', (r, i) => i*rh + 5).attr('height', rh - 10).attr('width', r => x(r.total)).attr('rx', 2).attr('fill', r => r.otros ? css('--range') : css('--accent'));
+    svg.append('g').selectAll('text').data(con).join('text').attr('x', r => x0 + x(r.total) + 6).attr('y', (r, i) => i*rh + rh/2 + 4).style('fill', css('--fg')).text(r => p1(r.total/Tot*100) + ' %  ' + mk(r.total));
+  }
+
+  document.querySelectorAll('.seg button').forEach(bt => bt.addEventListener('click', () => {
+    metric = bt.dataset.metric; document.querySelectorAll('.seg button').forEach(q => q.setAttribute('aria-pressed', String(q === bt))); drawSem(); }));
+  const drawAll = () => { drawSem(); drawMes(); drawCon(); };
+  drawAll();
+  let rw; addEventListener('resize', () => { clearTimeout(rw); rw = setTimeout(drawAll, 150); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
+})();
+</script>
+</body>
+</html>

@@ -65,6 +65,16 @@ tr:last-child td{border-bottom:0}
 details{font-size:13px;color:var(--muted)}
 details summary{cursor:pointer;color:var(--fg);font-weight:500}
 details ul{padding-left:18px;margin:8px 0 0;max-width:80ch}
+.fin-head{display:flex;flex-direction:column;gap:6px;border-top:2px solid var(--line);padding-top:24px}
+.eyebrow{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.pl td.lab{white-space:nowrap}
+.pl tr.sum td{font-weight:600;border-top:2px solid var(--line)}
+.pl tr.sec td{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em;background:var(--bg)}
+.pl td.neg{color:var(--bad)}
+.pl td:first-child,.pl th:first-child{position:sticky;left:0;background:var(--panel)}
+.pl tr.sec td:first-child{background:var(--bg)}
+.callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent2);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--muted);max-width:90ch}
+.callout b{color:var(--fg)}
 footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
 </style>
 </head>
@@ -112,6 +122,43 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
     <div class="scen" id="scen"></div>
   </section>
 
+
+  <div class="fin-head" id="finanzas">
+    <span class="eyebrow" data-i="finEyebrow"></span>
+    <h2 data-i="finH" style="font-size:26px"></h2>
+    <p class="lede" id="fin-lede"></p>
+  </div>
+  <div class="tiles" id="fin-kpis"></div>
+
+  <section>
+    <div><h2 data-i="finMonthH"></h2><p class="sub" data-i="finMonthSub"></p></div>
+    <div class="card">
+      <div class="chart" id="g-fin"></div>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--accent)"></i><span data-i="lgIng"></span></span>
+        <span><i class="sw" style="background:var(--range)"></i><span data-i="lgGas"></span></span>
+        <span><i class="sw line" style="background:var(--accent2)"></i><span data-i="lgNet"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid2">
+    <section>
+      <div><h2 data-i="finCatH"></h2><p class="sub" data-i="finCatSub"></p></div>
+      <div class="card"><div class="chart short" id="g-gcat"></div></div>
+    </section>
+    <section>
+      <div><h2 data-i="finIngH"></h2><p class="sub" data-i="finIngSub"></p></div>
+      <div class="card"><div class="chart short" id="g-icat"></div></div>
+    </section>
+  </div>
+
+  <section>
+    <div><h2 data-i="plH"></h2><p class="sub" data-i="plSub"></p></div>
+    <div class="tw"><table class="pl"><thead id="pl-head"></thead><tbody id="pl-body"></tbody></table></div>
+    <p class="callout" id="fin-note"></p>
+  </section>
+
   <div class="grid2">
     <section>
       <div><h2 data-i="monthH"></h2><p class="sub" data-i="monthSub"></p></div>
@@ -149,6 +196,7 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
 const DATA = {"semanal": [{"semana": "2026-01-20", "total": 5527.0, "bigt": 585.0, "pies": 780.0, "trabajos": 3}, {"semana": "2026-01-27", "total": 9482.5, "bigt": 995.25, "pies": 1327.0, "trabajos": 6}, {"semana": "2026-01-30", "total": 8189.88, "bigt": 769.5, "pies": 1026.0, "trabajos": 6}, {"semana": "2026-02-06", "total": 16352.5, "bigt": 1692.0, "pies": 2256.0, "trabajos": 10}, {"semana": "2026-02-13", "total": 4185.5, "bigt": 461.5, "pies": 605.0, "trabajos": 6}, {"semana": "2026-02-20", "total": 15900.77, "bigt": 1707.0, "pies": 2276.0, "trabajos": 5}, {"semana": "2026-02-27", "total": 28744.5, "bigt": 3070.5, "pies": 4094.0, "trabajos": 19}, {"semana": "2026-03-06", "total": 1043.0, "bigt": 111.75, "pies": 149.0, "trabajos": 1}, {"semana": "2026-03-13", "total": 19318.0, "bigt": 2017.5, "pies": 2690.0, "trabajos": 11}, {"semana": "2026-03-20", "total": 5977.0, "bigt": 564.75, "pies": 753.0, "trabajos": 4}, {"semana": "2026-03-27", "total": 3934.5, "bigt": 447.75, "pies": 597.0, "trabajos": 3}, {"semana": "2026-04-03", "total": 8215.5, "bigt": 962.25, "pies": 1283.0, "trabajos": 3}, {"semana": "2026-04-10", "total": 3871.5, "bigt": 423.0, "pies": 564.0, "trabajos": 3}, {"semana": "2026-04-24", "total": 14038.5, "bigt": 1761.75, "pies": 2349.0, "trabajos": 15}, {"semana": "2026-05-01", "total": 13672.0, "bigt": 1520.25, "pies": 2027.0, "trabajos": 10}, {"semana": "2026-05-08", "total": 7083.5, "bigt": 651.75, "pies": 869.0, "trabajos": 3}, {"semana": "2026-05-15", "total": 25945.0, "bigt": 2825.65, "pies": 3603.0, "trabajos": 15}, {"semana": "2026-05-22", "total": 30569.74, "bigt": 3112.5, "pies": 4150.0, "trabajos": 21}, {"semana": "2026-05-29", "total": 36547.1, "bigt": 3295.5, "pies": 4394.0, "trabajos": 16}, {"semana": "2026-06-05", "total": 23424.5, "bigt": 2473.5, "pies": 3298.0, "trabajos": 11}, {"semana": "2026-06-12", "total": 12998.0, "bigt": 1312.5, "pies": 1750.0, "trabajos": 7}, {"semana": "2026-06-19", "total": 14398.5, "bigt": 1587.25, "pies": 2023.0, "trabajos": 7}, {"semana": "2026-06-26", "total": 40864.49, "bigt": 4195.92, "pies": 5512.5, "trabajos": 26}, {"semana": "2026-07-03", "total": 35091.62, "bigt": 3450.0, "pies": 4600.0, "trabajos": 16}, {"semana": "2026-07-10", "total": 10439.5, "bigt": 1189.5, "pies": 1586.0, "trabajos": 7}, {"semana": "2026-07-17", "total": 61932.25, "bigt": 6356.25, "pies": 8475.0, "trabajos": 28}, {"semana": "2026-07-23", "total": 6043.0, "bigt": 672.75, "pies": 897.0, "trabajos": 4}, {"semana": "2026-07-31", "total": 32508.28, "bigt": 3534.5, "pies": 4730.0, "trabajos": 18}, {"semana": "2026-08-07", "total": 47927.5, "bigt": 4757.75, "pies": 6477.0, "trabajos": 23}, {"semana": "2026-08-14", "total": 22163.5, "bigt": 2109.0, "pies": 2812.0, "trabajos": 7}, {"semana": "2026-08-21", "total": 33239.0, "bigt": 3522.0, "pies": 4696.0, "trabajos": 14}, {"semana": "2026-08-28", "total": 35333.36, "bigt": 3902.63, "pies": 5418.0, "trabajos": 20}, {"semana": "2026-09-04", "total": 52071.0, "bigt": 5705.25, "pies": 7607.0, "trabajos": 32}, {"semana": "2026-09-11", "total": 21067.5, "bigt": 2298.75, "pies": 3065.0, "trabajos": 10}, {"semana": "2026-09-21", "total": 26721.25, "bigt": 2953.5, "pies": 3653.0, "trabajos": 12}, {"semana": "2026-09-25", "total": 14957.0, "bigt": 1725.25, "pies": 2237.0, "trabajos": 12}, {"semana": "2026-10-02", "total": 43945.0, "bigt": 4488.75, "pies": 5985.0, "trabajos": 20}, {"semana": "2026-10-09", "total": 37328.64, "bigt": 3570.0, "pies": 4760.0, "trabajos": 11}, {"semana": "2026-10-16", "total": 29431.0, "bigt": 2929.5, "pies": 3856.0, "trabajos": 13}, {"semana": "2026-10-23", "total": 28577.0, "bigt": 2897.0, "pies": 3696.0, "trabajos": 14}, {"semana": "2026-10-30", "total": 36331.89, "bigt": 3495.75, "pies": 4661.0, "trabajos": 13}, {"semana": "2026-11-06", "total": 20250.0, "bigt": 2081.44, "pies": 2595.0, "trabajos": 12}], "mensual": [{"mes": "2026-01", "total": 49603.65, "bigt": 5072.5, "trabajos": 34}, {"mes": "2026-02", "total": 53450.5, "bigt": 5811.75, "trabajos": 30}, {"mes": "2026-03", "total": 27173.0, "bigt": 2869.5, "trabajos": 18}, {"mes": "2026-04", "total": 58816.0, "bigt": 6556.9, "trabajos": 41}, {"mes": "2026-05", "total": 115025.34, "bigt": 11446.5, "trabajos": 60}, {"mes": "2026-06", "total": 107282.39, "bigt": 11155.17, "trabajos": 63}, {"mes": "2026-07", "total": 159379.25, "bigt": 16196.5, "trabajos": 76}, {"mes": "2026-08", "total": 132512.86, "bigt": 14372.13, "trabajos": 70}, {"mes": "2026-09", "total": 130740.39, "bigt": 13660.0, "trabajos": 55}, {"mes": "2026-10", "total": 110127.39, "bigt": 10877.94, "trabajos": 49}, {"mes": "2026-11", "total": 1531.0, "bigt": 165.0, "trabajos": 1}], "contratistas": [{"contratista": "Brody Allen", "total": 24226.5, "bigt": 2486.25, "pies": 3315.0, "trabajos": 16}, {"contratista": "Bone Dry", "total": 81015.98, "bigt": 8382.75, "pies": 11301.0, "trabajos": 48}, {"contratista": "Cardinal", "total": 328055.85, "bigt": 34333.07, "pies": 45543.0, "trabajos": 182}, {"contratista": "Bordner", "total": 293031.5, "bigt": 30601.17, "pies": 40619.5, "trabajos": 145}, {"contratista": "Directo / otros", "total": 15373.0, "bigt": 1605.0, "pies": 2140.0, "trabajos": 8}, {"contratista": "Blue Ladder", "total": 550.0, "bigt": 62.25, "pies": 83.0, "trabajos": 2}, {"contratista": "Messing", "total": 14826.56, "bigt": 1635.75, "pies": 2181.0, "trabajos": 13}, {"contratista": "Best Choice", "total": 5373.71, "bigt": 906.0, "pies": 1208.0, "trabajos": 2}, {"contratista": "Roof Works", "total": 52758.0, "bigt": 5488.15, "pies": 7153.0, "trabajos": 28}, {"contratista": "Griggs", "total": 5446.0, "bigt": 630.0, "pies": 840.0, "trabajos": 3}, {"contratista": "Empower", "total": 24046.5, "bigt": 2027.25, "pies": 2703.0, "trabajos": 8}, {"contratista": "Dark Skies", "total": 4820.5, "bigt": 443.25, "pies": 591.0, "trabajos": 2}, {"contratista": "Lenz", "total": 3894.0, "bigt": 411.0, "pies": 548.0, "trabajos": 2}, {"contratista": "ER", "total": 2204.0, "bigt": 252.0, "pies": 336.0, "trabajos": 1}, {"contratista": "Maverick", "total": 34043.5, "bigt": 3371.25, "pies": 4495.0, "trabajos": 16}, {"contratista": "Granite City", "total": 1005.0, "bigt": 100.5, "pies": 134.0, "trabajos": 1}, {"contratista": "Legendz", "total": 32561.17, "bigt": 3208.25, "pies": 4171.0, "trabajos": 13}, {"contratista": "Creve Coeur", "total": 2046.0, "bigt": 204.0, "pies": 272.0, "trabajos": 1}, {"contratista": "Golden", "total": 2786.5, "bigt": 354.75, "pies": 473.0, "trabajos": 1}, {"contratista": "GLDN", "total": 3574.0, "bigt": 424.5, "pies": 566.0, "trabajos": 1}, {"contratista": "Kendale Homes", "total": 8516.5, "bigt": 657.75, "pies": 877.0, "trabajos": 1}, {"contratista": "Green", "total": 4487.0, "bigt": 474.0, "pies": 632.0, "trabajos": 2}, {"contratista": "Pro Roofing", "total": 1000.0, "bigt": 125.0, "pies": 0.0, "trabajos": 1}], "pendientes": [{"contratista": "All or Nothing", "total": 4379.5, "bigt": 467.25, "trabajos": 2}, {"contratista": "Directo / otros", "total": 2115.5, "bigt": 210.75, "trabajos": 2}, {"contratista": "Cardinal", "total": 36129.0, "bigt": 3821.25, "trabajos": 14}, {"contratista": "Roof Works", "total": 8707.5, "bigt": 940.13, "trabajos": 5}, {"contratista": "Blue Ladder", "total": 13888.86, "bigt": 1652.25, "trabajos": 4}, {"contratista": "Empower", "total": 929.5, "bigt": 107.25, "trabajos": 1}, {"contratista": "Dark Skies", "total": 1366.0, "bigt": 162.0, "trabajos": 2}, {"contratista": "Messing", "total": 2399.0, "bigt": 319.5, "trabajos": 2}, {"contratista": "Santamaria", "total": 150.0, "bigt": 0.0, "trabajos": 1}, {"contratista": "AJ", "total": 85.0, "bigt": 10.5, "trabajos": 1}, {"contratista": "Legendz", "total": 2147.0, "bigt": 235.5, "trabajos": 2}, {"contratista": "Bordner", "total": 17549.5, "bigt": 1724.25, "trabajos": 8}, {"contratista": "Bone Dry", "total": 693.0, "bigt": 79.5, "trabajos": 1}], "trabajos_con_monto": 493, "corte": "2026-11-06"};
+const FIN = {"meses": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10"], "categorias": [{"nombre": "Big T Gutters", "tipo": "ing", "valores": [24446.66, 58947.27, 23469.5, 5331.5, 0, 0, 0, 0, 0, 0]}, {"nombre": "Aportes / transferencias familiares", "tipo": "otro", "valores": [12350.0, 0, 150.0, 800.0, 1.0, 0, 0, 16.0, 1997.0, 3151.0]}, {"nombre": "Otros clientes", "tipo": "ing", "valores": [200.0, 0, 0, 1985.98, 661.25, 0, 386.0, 0, 0, 0]}, {"nombre": "Combustible", "tipo": "gasto", "valores": [-930.25, -1103.89, -1156.69, -2463.42, -2152.1, -2467.82, -2428.86, -2738.99, -3084.07, -3755.54]}, {"nombre": "Hospedaje y viajes", "tipo": "gasto", "valores": [-2489.63, -1674.46, -252.36, -2556.8, -2013.27, -2625.19, -2080.52, -1612.57, -1950.46, -2678.89]}, {"nombre": "Materiales y herramientas", "tipo": "gasto", "valores": [-15070.82, -10851.08, -9435.1, -12225.3, -20453.57, -31156.75, -51136.6, -39876.3, -48413.59, -53677.95]}, {"nombre": "Depósitos en efectivo", "tipo": "ing", "valores": [2000.0, 0, 0, 0, 0, 0, 5417.0, 0, 2700.0, 0]}, {"nombre": "Personales / no del negocio", "tipo": "personal", "valores": [-713.4, -398.06, -1427.13, -560.91, -1056.71, -195.51, -1862.65, -1012.61, -1773.15, -909.69]}, {"nombre": "Mano de obra y subcontratistas", "tipo": "gasto", "valores": [-1350.0, -11830.0, -3714.0, -12850.0, -28507.0, -28251.0, -33865.0, -61246.85, -35274.0, -23276.0]}, {"nombre": "Seguros", "tipo": "gasto", "valores": [-555.35, -659.03, -659.03, -1447.43, -201.69, -103.68, -103.68, -103.68, -103.68, -483.09]}, {"nombre": "Cheques emitidos (sin detalle)", "tipo": "gasto", "valores": [-3049.44, -9320.39, -15324.26, -6564.74, -21873.89, -30882.1, -26786.79, -18724.63, -18791.85, -20598.8]}, {"nombre": "Comidas en ruta", "tipo": "gasto", "valores": [-78.65, 0, -74.4, -56.32, 0, 0, 1.6, 0, -754.94, -694.03]}, {"nombre": "Mantenimiento de vehículos", "tipo": "gasto", "valores": [-672.79, -120.8, 0, -117.24, -362.42, -100.8, -326.62, 0, -495.88, -963.82]}, {"nombre": "Retiros en efectivo (ATM)", "tipo": "gasto", "valores": [-200.0, -2500.0, 0, -1000.0, 0, 0, -1000.0, -3000.0, -1600.0, -6000.0]}, {"nombre": "Depósitos de cheques (móvil)", "tipo": "ing", "valores": [0, 658.0, 3844.5, 10489.65, 7083.5, 25478.75, 14370.28, 34798.0, 34614.0, 19312.39]}, {"nombre": "Servicios profesionales", "tipo": "gasto", "valores": [0, -100.0, -840.0, 0, 0, -1180.0, 0, 0, 0, 0]}, {"nombre": "Retiros del dueño", "tipo": "retiro", "valores": [0, -2102.0, -150.0, -14270.0, 0, -19000.0, -20000.0, -14000.0, -30000.0, -8001.0]}, {"nombre": "Teléfono e internet", "tipo": "gasto", "valores": [0, -49.99, -109.98, 0, -203.99, -69.99, -139.98, -141.99, 0, -129.99]}, {"nombre": "Impuestos y trámites", "tipo": "gasto", "valores": [0, 0, -1676.0, 0, 0, 0, 0, 0, 0, -450.0]}, {"nombre": "Allstar Home Services", "tipo": "ing", "valores": [0, 0, 0, 7386.0, 36982.5, 22482.5, 49139.5, 28204.5, 44856.0, 73650.5]}, {"nombre": "Bone Dry Roofing", "tipo": "ing", "valores": [0, 0, 0, 5081.0, 16491.24, 10497.49, 17514.75, 16243.0, 2760.0, 3642.5]}, {"nombre": "Cardinal", "tipo": "ing", "valores": [0, 0, 0, 0, 20348.1, 43976.5, 48380.12, 70164.86, 54391.25, 45061.64]}, {"nombre": "KC Roof Works", "tipo": "ing", "valores": [0, 0, 0, 0, 11212.0, 19773.0, 2949.5, 4261.0, 0, 4863.5]}, {"nombre": "Dark Skies Roofing", "tipo": "ing", "valores": [0, 0, 0, 0, 954.5, 0, 3866.0, 0, 0, 0]}, {"nombre": "Comisiones bancarias", "tipo": "gasto", "valores": [0, 0, 0, 0, -30.0, 0, -0.45, -93.5, 0, 0]}, {"nombre": "Maverick Exteriors", "tipo": "ing", "valores": [0, 0, 0, 0, 0, 0, 0, 7322.5, 7906.0, 12318.5]}, {"nombre": "Comisión Big T", "tipo": "gasto", "valores": [0, 0, 0, 0, 0, 0, 0, -12345.81, -6341.39, -5296.97]}, {"nombre": "Reembolsos y reembolsos de tarjeta", "tipo": "otro", "valores": [0, 0, 0, 0, 0, 0, 0, 0, 2.13, 2.06]}, {"nombre": "Vehículo (compra)", "tipo": "inversion", "valores": [0, 0, 0, 0, 0, 0, 0, 0, -30749.0, 749.0]}, {"nombre": "Green Construction", "tipo": "ing", "valores": [0, 0, 0, 0, 0, 0, 0, 0, 0, 4487.0]}, {"nombre": "Devoluciones a clientes", "tipo": "gasto", "valores": [0, 0, 0, 0, 0, 0, 0, 0, 0, -164.03]}]};
 (function(){
   const I18N = {
     es: {
@@ -182,7 +230,23 @@ const DATA = {"semanal": [{"semana": "2026-01-20", "total": 5527.0, "bigt": 585.
       tWeek: 'Semana de pago ', tProj: 'Proyección ', tProjLbl: 'Proyección', tTotal: 'Total: ', tBigt: 'Big T: ', tMa: 'Prom. móvil 4 sem.: ', tJobs: ' trabajos', tFt: ' pies',
       ariaWeek: (m) => m + ' por semana de pago en 2026 con proyección al cierre del año', ariaMonth: 'Total facturado por mes, enero a noviembre de 2026', ariaShare: 'Participación de cada contratista en el total facturado',
       months: ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'], monthsL: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
-      day: (d, m) => d + ' ' + m, dayL: (d, m) => d + ' de ' + m
+      day: (d, m) => d + ' ' + m, dayL: (d, m) => d + ' de ' + m,
+      finEyebrow: 'Finanzas · estados de cuenta Bank of America', finH: 'Ingresos, gastos y utilidad neta',
+      finLede: ['De enero a octubre entraron ', ' por trabajos y salieron ', ' en gastos del negocio, para una utilidad neta estimada de ', ' (margen de ', '). Si el margen se mantiene, 2026 cerraría con una utilidad neta cercana a ', '.'],
+      fIng: 'Ingresos por trabajos', fIngN: 'Depósitos de clientes, ene–oct',
+      fGas: 'Gastos del negocio', fGasN: (p) => p + ' de los ingresos',
+      fNet: 'Utilidad neta estimada', fNetN: (p) => 'Margen neto ' + p,
+      fBest: 'Mejor mes', fBestN: (m, p) => m + ' · margen ' + p,
+      fProj: 'Utilidad neta proyectada 2026', fProjN: 'Escenario base × margen del año',
+      fOwner: 'Retiros del dueño y personales', fOwnerN: (v) => 'Más ' + v + ' en compra de vehículo',
+      finMonthH: 'Ingresos, gastos y utilidad por mes', finMonthSub: 'Según la fecha de cada movimiento en el banco',
+      lgIng: 'Ingresos por trabajos', lgGas: 'Gastos del negocio', lgNet: 'Utilidad neta',
+      finCatH: 'En qué se va el dinero', finCatSub: 'Gastos del negocio por categoría, ene–oct',
+      finIngH: 'De dónde viene el dinero', finIngSub: 'Ingresos por cliente según los depósitos, ene–oct',
+      plH: 'Estado de resultados mensual', plSub: 'Montos en dólares; las columnas se desplazan a la derecha',
+      plIng: 'Ingresos', plGas: 'Gastos del negocio', plTotIng: 'Total ingresos', plTotGas: 'Total gastos', plNet: 'Utilidad neta', plMargin: 'Margen neto', plBelow: 'Fuera de la utilidad', plTotal: 'Total',
+      finNote: ['Cómo leer estas cifras: ', 'son estimados a partir de los movimientos del banco, no una contabilidad formal. Los cheques no traen el nombre de quién los cobró, así que se cuentan como gasto del negocio (probablemente mano de obra, proveedores o pagos a Bill). Los retiros en efectivo también se cuentan como gasto. Los pagos al dueño, la compra del vehículo, los gastos personales y el dinero que entró de familiares quedan fuera de la utilidad.'],
+      cat: {}
     },
     en: {
       docTitle: 'MGutterSolutions · 2026 KPIs', title: '2026 KPIs and forecast',
@@ -215,7 +279,28 @@ const DATA = {"semanal": [{"semana": "2026-01-20", "total": 5527.0, "bigt": 585.
       tWeek: 'Pay week ', tProj: 'Forecast ', tProjLbl: 'Forecast', tTotal: 'Total: ', tBigt: 'Big T: ', tMa: '4-wk moving avg.: ', tJobs: ' jobs', tFt: ' ft',
       ariaWeek: (m) => m + ' by pay week in 2026 with year-end forecast', ariaMonth: 'Total billed by month, January to November 2026', ariaShare: 'Each contractor’s share of total billed',
       months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], monthsL: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-      day: (d, m) => m + ' ' + d, dayL: (d, m) => m + ' ' + d
+      day: (d, m) => m + ' ' + d, dayL: (d, m) => m + ' ' + d,
+      finEyebrow: 'Finance · Bank of America statements', finH: 'Revenue, expenses and net profit',
+      finLede: ['From January to October, ', ' came in from jobs and ', ' went out in business expenses, for an estimated net profit of ', ' (', ' margin). If the margin holds, 2026 would close with net profit near ', '.'],
+      fIng: 'Revenue from jobs', fIngN: 'Client deposits, Jan–Oct',
+      fGas: 'Business expenses', fGasN: (p) => p + ' of revenue',
+      fNet: 'Estimated net profit', fNetN: (p) => 'Net margin ' + p,
+      fBest: 'Best month', fBestN: (m, p) => m + ' · margin ' + p,
+      fProj: 'Projected 2026 net profit', fProjN: 'Base scenario × year margin',
+      fOwner: 'Owner draws and personal', fOwnerN: (v) => 'Plus ' + v + ' vehicle purchase',
+      finMonthH: 'Revenue, expenses and profit by month', finMonthSub: 'By the date of each bank transaction',
+      lgIng: 'Revenue from jobs', lgGas: 'Business expenses', lgNet: 'Net profit',
+      finCatH: 'Where the money goes', finCatSub: 'Business expenses by category, Jan–Oct',
+      finIngH: 'Where the money comes from', finIngSub: 'Revenue by client from deposits, Jan–Oct',
+      plH: 'Monthly income statement', plSub: 'Amounts in dollars; columns scroll to the right',
+      plIng: 'Revenue', plGas: 'Business expenses', plTotIng: 'Total revenue', plTotGas: 'Total expenses', plNet: 'Net profit', plMargin: 'Net margin', plBelow: 'Outside profit', plTotal: 'Total',
+      finNote: ['How to read these figures: ', 'they are estimates from bank transactions, not formal bookkeeping. Checks do not show who cashed them, so they count as business expenses (likely labor, suppliers or payments to Bill). ATM cash withdrawals also count as expenses. Owner payments, the vehicle purchase, personal spending and money received from family are kept out of profit.'],
+      cat: {'Allstar Home Services':'Allstar Home Services','Cardinal':'Cardinal','Big T Gutters':'Big T Gutters','Bone Dry Roofing':'Bone Dry Roofing','KC Roof Works':'KC Roof Works','Maverick Exteriors':'Maverick Exteriors','Green Construction':'Green Construction','Dark Skies Roofing':'Dark Skies Roofing',
+        'Otros clientes':'Other clients','Depósitos de cheques (móvil)':'Check deposits (mobile)','Depósitos en efectivo':'Cash deposits',
+        'Materiales y herramientas':'Materials and tools','Mano de obra y subcontratistas':'Labor and subcontractors','Cheques emitidos (sin detalle)':'Checks written (no detail)','Comisión Big T':'Big T commission',
+        'Combustible':'Fuel','Hospedaje y viajes':'Lodging and travel','Retiros en efectivo (ATM)':'ATM cash withdrawals','Seguros':'Insurance','Mantenimiento de vehículos':'Vehicle maintenance','Impuestos y trámites':'Taxes and filings',
+        'Servicios profesionales':'Professional services','Comidas en ruta':'Meals on the road','Teléfono e internet':'Phone and internet','Comisiones bancarias':'Bank fees','Devoluciones a clientes':'Client refunds',
+        'Retiros del dueño':'Owner draws','Vehículo (compra)':'Vehicle purchase','Personales / no del negocio':'Personal / non-business','Aportes / transferencias familiares':'Family contributions / transfers','Reembolsos y reembolsos de tarjeta':'Card rebates','Otros gastos':'Other expenses','Otros':'Others'}
     }
   };
   let lang = 'es';
@@ -366,15 +451,93 @@ const DATA = {"semanal": [{"semana": "2026-01-20", "total": 5527.0, "bigt": 585.
     svg.append('g').selectAll('text').data(con).join('text').attr('x', r => x0 + x(r.total) + 6).attr('y', (r, i) => i*rh + rh/2 + 4).style('fill', css('--fg')).text(r => pct(r.total/Tot*100) + '  ' + mk(r.total));
   }
 
+  // ---- finanzas / finance (estados de cuenta)
+  const cn = (c) => L().cat[c] || c;
+  const FM = FIN.meses.map(m => pm(m));
+  const byTipo = (tp) => FIN.categorias.filter(c => c.tipo === tp);
+  const sumv = (cs, i) => d3.sum(cs, c => c.valores[i]);
+  const ingC = byTipo('ing').map(c => ({...c, total: d3.sum(c.valores)})).sort((x, y) => y.total - x.total);
+  const gasC = byTipo('gasto').map(c => ({...c, total: -d3.sum(c.valores)})).sort((x, y) => y.total - x.total);
+  const fuera = ['retiro', 'inversion', 'personal', 'otro'].flatMap(tp => byTipo(tp)).map(c => ({...c, total: d3.sum(c.valores)}));
+  const fMonths = FIN.meses.map((m, i) => { const ing = sumv(ingC, i), gas = -sumv(gasC, i); return {d: FM[i], ing, gas, net: ing - gas}; });
+  const fIng = d3.sum(fMonths, r => r.ing), fGas = d3.sum(fMonths, r => r.gas), fNet = fIng - fGas, fMargin = fNet / fIng;
+  const fBest = fMonths.slice().sort((x, y) => y.net - x.net)[0];
+  const fProj = fNet + (base.cierre - Tot) * fMargin;
+  const ownerPers = -d3.sum(fuera.filter(c => c.tipo === 'retiro' || c.tipo === 'personal'), c => c.total);
+  const vehicle = -d3.sum(fuera.filter(c => c.tipo === 'inversion'), c => c.total);
+  const group = (list, n, otherKey) => { const top = list.slice(0, n), rest = list.slice(n);
+    return rest.length ? top.concat([{nombre: otherKey, total: d3.sum(rest, c => c.total), otros: true}]) : top; };
+
+  function renderFin(){
+    const t = L(), B = (x) => el('b', null, x), s = t.finLede;
+    document.getElementById('fin-lede').replaceChildren(s[0], B(money(fIng)), s[1], B(money(fGas)), s[2], B(money(fNet)), s[3], B(pct(fMargin * 100)), s[4], B(money(fProj)), s[5]);
+    const K = document.getElementById('fin-kpis'); K.replaceChildren();
+    [[t.fIng, money(fIng), t.fIngN], [t.fGas, money(fGas), t.fGasN(pct(fGas / fIng * 100))], [t.fNet, money(fNet), t.fNetN(pct(fMargin * 100))],
+     [t.fBest, money(fBest.net), t.fBestN(t.monthsL[fBest.d.getUTCMonth()], pct(fBest.net / fBest.ing * 100))], [t.fProj, money(fProj), t.fProjN], [t.fOwner, money(ownerPers), t.fOwnerN(money(vehicle))]]
+      .forEach(([l, v, n]) => { const c = el('div', 'tile'); c.append(el('span', 'lbl', l), el('span', 'big', v), el('span', 'note', n)); K.append(c); });
+
+    const H = document.getElementById('pl-head'), Bd = document.getElementById('pl-body');
+    const hr = el('tr'); hr.append(el('th', null, '')); FM.forEach(d => hr.append(el('th', 'n', t.months[d.getUTCMonth()]))); hr.append(el('th', 'n', t.plTotal)); H.replaceChildren(hr);
+    Bd.replaceChildren();
+    const fmt = (v) => v === 0 ? '–' : money(v);
+    const line = (label, vals, cls, f) => { const tr = el('tr', cls || ''); tr.append(el('td', 'lab', label));
+      vals.concat([d3.sum(vals)]).forEach((v, i) => { const td = el('td', 'n' + (v < 0 ? ' neg' : ''), (f || fmt)(v, i)); tr.append(td); }); Bd.append(tr); };
+    const sec = (label) => { const tr = el('tr', 'sec'); const td = el('td', null, label); td.colSpan = FM.length + 2; tr.append(td); Bd.append(tr); };
+    sec(t.plIng); ingC.forEach(c => line(cn(c.nombre), c.valores));
+    line(t.plTotIng, fMonths.map(r => r.ing), 'sum');
+    sec(t.plGas); gasC.forEach(c => line(cn(c.nombre), c.valores.map(v => -v)));
+    line(t.plTotGas, fMonths.map(r => r.gas), 'sum');
+    line(t.plNet, fMonths.map(r => r.net), 'sum');
+    const tr = el('tr'); tr.append(el('td', 'lab', t.plMargin)); fMonths.forEach(r => tr.append(el('td', 'n' + (r.net < 0 ? ' neg' : ''), pct(r.net / r.ing * 100)))); tr.append(el('td', 'n', pct(fMargin * 100))); Bd.append(tr);
+    sec(t.plBelow); fuera.filter(c => Math.abs(c.total) >= 1).forEach(c => line(cn(c.nombre), c.valores));
+    const note = document.getElementById('fin-note'); note.replaceChildren(el('b', null, t.finNote[0]), t.finNote[1]);
+  }
+
+  function drawFin(){
+    const t = L(), box = document.getElementById('g-fin'); box.replaceChildren();
+    const W = box.clientWidth, H = 300, m = {t: 14, r: 6, b: 26, l: 8};
+    const svg = d3.select(box).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', t.finMonthH);
+    const y = d3.scaleLinear().domain([Math.min(0, d3.min(fMonths, r => r.net)), d3.max(fMonths, r => Math.max(r.ing, r.gas))]).nice().range([H - m.b, m.t]);
+    const gy = svg.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(mk)); let lw = 0; gy.selectAll('text').each(function(){ lw = Math.max(lw, this.getComputedTextLength()); }); gy.remove();
+    m.l = lw + 12;
+    const x = d3.scaleBand().domain(fMonths.map(r => +r.d)).range([m.l, W - m.r]).padding(0.22);
+    const x1 = d3.scaleBand().domain(['ing', 'gas']).range([0, x.bandwidth()]).padding(0.08);
+    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(mk).tickSize(-(W - m.l - m.r))).call(g => g.select('.domain').remove());
+    svg.append('g').attr('transform', `translate(0,${y(0)})`).call(d3.axisBottom(x).tickFormat(d => t.months[new Date(d).getUTCMonth()]).tickSize(0).tickPadding(8)).call(g => g.select('.domain').attr('stroke', css('--line')))
+      .selectAll('text').attr('y', (d) => (y(0) < H - m.b - 4 ? (H - m.b - y(0)) + 8 : 8));
+    const g = svg.append('g');
+    g.selectAll('rect.i').data(fMonths).join('rect').attr('x', r => x(+r.d) + x1('ing')).attr('width', x1.bandwidth()).attr('y', r => y(r.ing)).attr('height', r => y(0) - y(r.ing)).attr('rx', 2).attr('fill', css('--accent'));
+    g.selectAll('rect.g').data(fMonths).join('rect').attr('x', r => x(+r.d) + x1('gas')).attr('width', x1.bandwidth()).attr('y', r => y(r.gas)).attr('height', r => y(0) - y(r.gas)).attr('rx', 2).attr('fill', css('--range'));
+    svg.append('path').datum(fMonths).attr('fill', 'none').attr('stroke', css('--accent2')).attr('stroke-width', 2.5).attr('d', d3.line().x(r => x(+r.d) + x.bandwidth() / 2).y(r => y(r.net)));
+    svg.append('g').selectAll('circle').data(fMonths).join('circle').attr('cx', r => x(+r.d) + x.bandwidth() / 2).attr('cy', r => y(r.net)).attr('r', 3.5).attr('fill', css('--accent2'));
+    const tp = tipper(box);
+    svg.append('g').selectAll('rect').data(fMonths).join('rect').attr('x', r => x(+r.d) - x.step() * x.padding() / 2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('pointerenter', (ev, r) => tp.show([[t.monthsL[r.d.getUTCMonth()] + ' 2026', 1], [t.lgIng + ': ' + money(r.ing)], [t.lgGas + ': ' + money(r.gas)], [t.lgNet + ': ' + money(r.net) + ' (' + pct(r.net / r.ing * 100) + ')']], x(+r.d) + x.bandwidth() / 2, y(Math.max(r.ing, r.gas))))
+      .on('pointerleave', () => tp.hide());
+  }
+
+  function hbars(id, list, total, otherKey, aria){
+    const t = L(), box = document.getElementById(id); box.replaceChildren();
+    const rows = group(list, 7, otherKey), W = box.clientWidth, rh = 26, H = rows.length * rh + 4;
+    const svg = d3.select(box).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', aria);
+    const names = svg.append('g').selectAll('text').data(rows).join('text').attr('y', (r, i) => i * rh + rh / 2 + 4).text(r => cn(r.nombre));
+    let nw = 0; names.each(function(){ nw = Math.max(nw, this.getComputedTextLength()); });
+    const probe = svg.append('text').text('100.0 %  $000.0 k'); const vw = probe.node().getComputedTextLength(); probe.remove();
+    const x0 = nw + 10, x = d3.scaleLinear().domain([0, d3.max(rows, r => r.total)]).range([0, Math.max(20, W - x0 - vw - 10)]);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', x0).attr('y', (r, i) => i * rh + 5).attr('height', rh - 10).attr('width', r => x(Math.max(0, r.total))).attr('rx', 2).attr('fill', r => r.otros ? css('--range') : css('--accent'));
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', r => x0 + x(Math.max(0, r.total)) + 6).attr('y', (r, i) => i * rh + rh / 2 + 4).style('fill', css('--fg')).text(r => pct(r.total / total * 100) + '  ' + mk(r.total));
+  }
+  function drawCats(){ const t = L(); hbars('g-gcat', gasC, fGas, 'Otros gastos', t.finCatH); hbars('g-icat', ingC, fIng, 'Otros', t.finIngH); }
+
   document.querySelectorAll('#metric button').forEach(bt => bt.addEventListener('click', () => {
     metric = bt.dataset.metric; document.querySelectorAll('#metric button').forEach(q => q.setAttribute('aria-pressed', String(q === bt))); drawSem(); }));
-  const drawAll = () => { drawSem(); drawMes(); drawCon(); };
+  const drawAll = () => { drawSem(); drawMes(); drawCon(); drawFin(); drawCats(); };
   document.querySelectorAll('#lang button').forEach(bt => bt.addEventListener('click', () => {
     if (bt.dataset.lang === lang) return; lang = bt.dataset.lang;
     try { localStorage.setItem('mgs-lang', lang); } catch (e) {}
     try { const u = new URL(location.href); u.searchParams.set('lang', lang); history.replaceState(null, '', u); } catch (e) {}
-    renderText(); drawAll(); }));
-  renderText(); drawAll();
+    renderText(); renderFin(); drawAll(); }));
+  renderText(); renderFin(); drawAll();
   let rw; addEventListener('resize', () => { clearTimeout(rw); rw = setTimeout(drawAll, 150); });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
 })();

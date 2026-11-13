@@ -129,6 +129,10 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
     <p class="lede" id="fin-lede"></p>
   </div>
   <div class="tiles" id="fin-kpis"></div>
+  <section id="promedios">
+    <div><h2 data-i="avgH"></h2><p class="sub" data-i="avgSub"></p></div>
+    <div class="tiles" id="fin-avg"></div>
+  </section>
 
   <section>
     <div><h2 data-i="finMonthH"></h2><p class="sub" data-i="finMonthSub"></p></div>
@@ -231,6 +235,10 @@ const FIN = {"meses": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2
       ariaWeek: (m) => m + ' por semana de pago en 2026 con proyección al cierre del año', ariaMonth: 'Total facturado por mes, enero a noviembre de 2026', ariaShare: 'Participación de cada contratista en el total facturado',
       months: ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'], monthsL: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
       day: (d, m) => d + ' ' + m, dayL: (d, m) => d + ' de ' + m,
+      avgH: 'Promedios mensuales', avgSub: 'Enero a octubre de 2026 (10 meses). Debajo de cada cifra, el promedio de los últimos 3 meses',
+      aIng: 'Ingreso promedio por mes', aGas: 'Gasto promedio por mes', aNet: 'Utilidad promedio por mes', aMar: 'Margen neto promedio',
+      aMat: 'Materiales por mes', aLab: 'Mano de obra por mes', aL3: (v) => 'Últimos 3 meses: ' + v, aRange: (a, b) => 'Rango: ' + a + ' a ' + b,
+      aShare: (p) => p + ' del gasto total',
       finEyebrow: 'Finanzas · estados de cuenta Bank of America', finH: 'Ingresos, gastos y utilidad neta',
       finLede: ['De enero a octubre entraron ', ' por trabajos y salieron ', ' en gastos del negocio, para una utilidad neta estimada de ', ' (margen de ', '). Si el margen se mantiene, 2026 cerraría con una utilidad neta cercana a ', '.'],
       fIng: 'Ingresos por trabajos', fIngN: 'Depósitos de clientes, ene–oct',
@@ -280,6 +288,10 @@ const FIN = {"meses": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2
       ariaWeek: (m) => m + ' by pay week in 2026 with year-end forecast', ariaMonth: 'Total billed by month, January to November 2026', ariaShare: 'Each contractor’s share of total billed',
       months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], monthsL: ['January','February','March','April','May','June','July','August','September','October','November','December'],
       day: (d, m) => m + ' ' + d, dayL: (d, m) => m + ' ' + d,
+      avgH: 'Monthly averages', avgSub: 'January to October 2026 (10 months). Under each figure, the average of the last 3 months',
+      aIng: 'Average revenue per month', aGas: 'Average expenses per month', aNet: 'Average profit per month', aMar: 'Average net margin',
+      aMat: 'Materials per month', aLab: 'Labor per month', aL3: (v) => 'Last 3 months: ' + v, aRange: (a, b) => 'Range: ' + a + ' to ' + b,
+      aShare: (p) => p + ' of total expenses',
       finEyebrow: 'Finance · Bank of America statements', finH: 'Revenue, expenses and net profit',
       finLede: ['From January to October, ', ' came in from jobs and ', ' went out in business expenses, for an estimated net profit of ', ' (', ' margin). If the margin holds, 2026 would close with net profit near ', '.'],
       fIng: 'Revenue from jobs', fIngN: 'Client deposits, Jan–Oct',
@@ -476,6 +488,19 @@ const FIN = {"meses": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2
      [t.fBest, money(fBest.net), t.fBestN(t.monthsL[fBest.d.getUTCMonth()], pct(fBest.net / fBest.ing * 100))], [t.fProj, money(fProj), t.fProjN], [t.fOwner, money(ownerPers), t.fOwnerN(money(vehicle))]]
       .forEach(([l, v, n]) => { const c = el('div', 'tile'); c.append(el('span', 'lbl', l), el('span', 'big', v), el('span', 'note', n)); K.append(c); });
 
+
+    const A = document.getElementById('fin-avg'); A.replaceChildren();
+    const nM = fMonths.length, l3 = fMonths.slice(-3), avg = (f, arr) => d3.mean(arr || fMonths, f);
+    const catAvg = (name, arr) => { const c = gasC.find(x => x.nombre === name); if (!c) return 0; const idx = (arr === 'l3') ? c.valores.slice(-3) : c.valores; return -d3.mean(idx); };
+    const catTot = (name) => (gasC.find(x => x.nombre === name) || {total: 0}).total;
+    const mMin = d3.min(fMonths, r => r.net / r.ing), mMax = d3.max(fMonths, r => r.net / r.ing);
+    [[t.aIng, money(avg(r => r.ing)), t.aL3(money(avg(r => r.ing, l3)))],
+     [t.aGas, money(avg(r => r.gas)), t.aL3(money(avg(r => r.gas, l3)))],
+     [t.aNet, money(avg(r => r.net)), t.aL3(money(avg(r => r.net, l3)))],
+     [t.aMar, pct(fMargin * 100), t.aL3(pct(d3.sum(l3, r => r.net) / d3.sum(l3, r => r.ing) * 100)) + ' · ' + t.aRange(pct(mMin * 100), pct(mMax * 100))],
+     [t.aMat, money(catAvg('Materiales y herramientas')), t.aShare(pct(catTot('Materiales y herramientas') / fGas * 100)) + ' · ' + t.aL3(money(catAvg('Materiales y herramientas', 'l3')))],
+     [t.aLab, money(catAvg('Mano de obra y subcontratistas')), t.aShare(pct(catTot('Mano de obra y subcontratistas') / fGas * 100)) + ' · ' + t.aL3(money(catAvg('Mano de obra y subcontratistas', 'l3')))]]
+      .forEach(([l, v, n]) => { const c = el('div', 'tile'); c.append(el('span', 'lbl', l), el('span', 'big', v), el('span', 'note', n)); A.append(c); });
     const H = document.getElementById('pl-head'), Bd = document.getElementById('pl-body');
     const hr = el('tr'); hr.append(el('th', null, '')); FM.forEach(d => hr.append(el('th', 'n', t.months[d.getUTCMonth()]))); hr.append(el('th', 'n', t.plTotal)); H.replaceChildren(hr);
     Bd.replaceChildren();
